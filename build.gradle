@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+
+    compile 'com.google.apis:google-api-services-analyticsreporting:v4-rev20210106-1.31.5' // Reporting API
+    compile 'com.google.apis:google-api-services-analytics:v3-rev20190807-1.31.5'          // Management API
+    compile 'com.google.analytics:google-analytics-admin:0.1.1'                            // Admin API
+    compile 'com.google.apis:google-api-services-tagmanager:v2-rev20210602-1.31.5'         // gtm API
+    implementation group: 'com.google.auth', name: 'google-auth-library-oauth2-http', version: '0.25.5' // OAuth2.0
+}
+
+test {
+    useJUnitPlatform()
+}
