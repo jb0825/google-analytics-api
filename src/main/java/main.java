@@ -10,12 +10,15 @@ public class main {
         gtm.initialize();
 
         gtm.getAccounts().forEach(i -> System.out.println(i.toString()));
+
+        /*
         System.out.println(gtm.getAccount("6005040042"));
 
         gtm.setAccountId("6004589006");
         gtm.getContainers().forEach(i -> System.out.println(i.toString()));
 
         System.out.println(gtm.getContainer());
+        */
     }
 
 }

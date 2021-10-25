@@ -30,15 +30,6 @@ public class GTM {
     private String accountId;
     private String containerId;
 
-    public GTM(String accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * TagManager 객체 생성
-     * @throws GeneralSecurityException
-     * @throws IOException
-     */
     public void initialize() throws GeneralSecurityException, IOException {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         GoogleCredential credential = GoogleCredential
@@ -48,39 +39,52 @@ public class GTM {
         tagManager = new TagManager(httpTransport, GsonFactory.getDefaultInstance(), credential);
     }
 
+    private String getAccountPath() { return "accounts/" + accountId; }
     private String getContainerPath() { return "accounts/" + accountId + "/containers/" + containerId; }
     private String getWorkspacePath() { return "accounts/" + accountId + "/containers/" + containerId + "/workspaces/2"; }
 
-    /* Account
-    * setAccountId(accountId) 호출 후 실행
-    * */
+    /**
+     * Account
+     */
     public List<Account> getAccounts() throws IOException { return tagManager.accounts().list().execute().getAccount(); }
-    public Account getAccount(String accountId) throws IOException { return tagManager.accounts().get("accounts/" + accountId).execute(); }
 
-    /* Container
-    * setAccountId(accountId), setContainerId(containerId) 호출 후 실행
-    * */
-    public List<Container> getContainers() throws IOException {
-        return tagManager.accounts().containers().list("accounts/" + accountId).execute().getContainer();
+    public Account getAccount(String accountId) throws IOException { return tagManager.accounts().get(getAccountPath()).execute(); }
+
+    public Account update(String name, boolean shareData) throws IOException {
+        Account account = new Account();
+        account.setName(name);
+        account.setShareData(shareData);
+
+        return tagManager.accounts().update(getAccountPath(), account).execute();
     }
 
-    public Container getContainer() throws IOException {
-        return tagManager.accounts().containers().get(getContainerPath()).execute();
-    }
+    /**
+     * Container
+     */
+    public List<Container> getContainers() throws IOException { return tagManager.accounts().containers().list(getAccountPath()).execute().getContainer(); }
+
+    public Container getContainer() throws IOException { return tagManager.accounts().containers().get(getContainerPath()).execute(); }
 
     public Container createContainer(String name) throws IOException {
         Container container = new Container();
         container.setName(name);
         container.setUsageContext(Collections.singletonList("0"));
 
-        return tagManager.accounts().containers().create("accounts/" + accountId, container).execute();
+        return tagManager.accounts().containers().create(getAccountPath(), container).execute();
+    }
+
+    public Container updateContainer(String name) throws IOException {
+        Container container = new Container();
+        container.setName(name);
+
+        return tagManager.accounts().containers().update(getContainerPath(), container).execute();
     }
 
     public void deleteContainer() throws IOException { tagManager.accounts().containers().delete(getContainerPath()).execute(); }
 
-    /* folder
-    * setAccountId(accountId), setContainerId(containerId) 호출 후 실행
-    * */
+    /**
+     * Folder
+     */
     public List<Folder> getFolders() throws IOException {
         return tagManager.accounts().containers().workspaces().folders().list(getWorkspacePath()).execute().getFolder();
     }
@@ -89,5 +93,22 @@ public class GTM {
         return tagManager.accounts().containers().workspaces().folders().get(getWorkspacePath() + "/folders/" + folderId).execute();
     }
 
+    public Folder createFolder(String name) throws IOException {
+        Folder folder = new Folder();
+        folder.setName(name);
+
+        return tagManager.accounts().containers().workspaces().folders().create(getWorkspacePath(), folder).execute();
+    }
+
+    public Folder updateFolder(String folderId, String name) throws IOException {
+        Folder folder = new Folder();
+        folder.setName(name);
+
+        return tagManager.accounts().containers().workspaces().folders().update(getWorkspacePath() + "/folders/" + folderId, folder).execute();
+    }
+
+    public void deleteFolder(String folderId) throws IOException {
+        tagManager.accounts().containers().workspaces().folders().delete(getWorkspacePath() + "/folders/" + folderId).execute();
+    }
 
 }
