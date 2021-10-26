@@ -11,6 +11,8 @@ public class main {
 
         gtm.getAccounts().forEach(i -> System.out.println(i.toString()));
 
+        gtm.getAccount("12312333");
+
         /*
         System.out.println(gtm.getAccount("6005040042"));
 
@@ -19,6 +21,17 @@ public class main {
 
         System.out.println(gtm.getContainer());
         */
+
+        /*
+                try {
+            return tagManager.accounts().get(getAccountPath()).execute();
+        } catch (GoogleJsonResponseException e) {
+            System.out.println("[STATUS] : " + e.getStatusCode() + " " + e.getStatusMessage());
+            System.out.println("[ERROR] : Invalid arguments");
+
+            return null;
+        }
+         */
     }
 
 }
