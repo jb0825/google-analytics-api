@@ -1,0 +1,14 @@
+상품 상세 보기 - 상품 배열
+function() {var productInfo = [{'id': iProductNo,'name': product_name,'price': product_sale_price,'category': iCategoryNo}];return productInfo;}
+장바구니 보기 - 상품 배열
+function() {if (aBasketProductData.length > 0) {var source = aBasketProductData;var productInfo = []; for(var i = 0 ; i < source.length ; i++) { var productId = source[i].product_no; var productName = source[i].product_name; var productPrice = source[i].product_sale_price; var productQty = source[i].quantity; var productOpt = source[i].opt_str; var productCate = source[i].main_cate_no; productInfo.push({ 'id': productId, 'name': productName, 'price': productPrice, 'variant': productOpt, 'quantity': productQty, 'category': productCate});} return productInfo; }}
+주문서 작성 - 상품 배열
+function() {var source = aBasketProductOrderData;var productInfo = [];for(var i = 0 ; i < source.length ; i++) {var productId = source[i].product_no;var productPrice = source[i].product_sale_price;var productQty = source[i].quantity;var productCate = source[i].main_cate_no; productInfo.push({'id': productId, 'price': productPrice,'quantity': productQty,'category': productCate});} return productInfo; }
+주문 완료 - 주문 번호
+function() { var source = EC_FRONT_EXTERNAL_SCRIPT_VARIABLE_DATA; var orderId = source.order_id; return orderId; }
+주문 완료 - 결제 금액
+function() {var source = EC_FRONT_EXTERNAL_SCRIPT_VARIABLE_DATA; var revenue = source.payed_amount; return revenue;}
+주문 완료 - 배송비
+function() { var source = EC_FRONT_EXTERNAL_SCRIPT_VARIABLE_DATA; var shippingFee = source.total_basic_ship_fee; return shippingFee;}
+주문 완료 - 상품 배열
+function() {var source = EC_FRONT_EXTERNAL_SCRIPT_VARIABLE_DATA.order_product;var productInfo = [];for(var i = 0 ; i < source.length ; i++) {var productId = source[i].product_no; var productName = source[i].product_name;var productPrice = source[i].product_price;var productQty = source[i].quantity;var productCate = source[i].category_no_2;productInfo.push({'id': productId, 'name': productName, 'price': productPrice,'category': productCate,'quantity': productQty});} return productInfo;
