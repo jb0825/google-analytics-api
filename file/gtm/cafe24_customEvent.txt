@@ -1,0 +1,8 @@
+이벤트 - 상품 상세 보기
+detail
+이벤트 - 장바구니
+viewCart
+이벤트 - 주문서 작성
+checkout
+이벤트 - 주문 완료
+purchase
