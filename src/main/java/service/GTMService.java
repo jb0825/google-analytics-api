@@ -51,8 +51,9 @@ public class GTMService {
                 );
             }
 
-            // create UA Triggers & Tags
+            // create Custom Event Triggers & UA Tags
             List<String> customEventData = fileReaders.readFile("cafe24_customEvent");
+
             String[][] UATagData = {
                 {"template", "trackType", "TRACK_EVENT"},
                 {"template", "trackingId", UAPropertyId},
@@ -62,22 +63,23 @@ public class GTMService {
                 {"boolean", "useEcommerceDataLayer", "true"},
                 {"boolean", "enableEcommerce", "true"}
             };
+            List<Parameter> UATagParams = new ArrayList<>();
+            for(String[] d : UATagData)
+                UATagParams.add(new Parameter().setType(d[0]).setKey(d[1]).setValue(d[2]));
+
+            List<Parameter> customEventFilterParams = new ArrayList<>();
+            customEventFilterParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{_event}}"));
+            customEventFilterParams.add(new Parameter().setType("templete").setKey("arg1").setValue(""));
 
             for (int i = 0; i < customEventData.size(); i++) {
                 String name = customEventData.get(i);
-                String event = customEventData.get(i++);
+                String event = customEventData.get(++i);
 
-                List<Parameter> UATagParams = new ArrayList<>();
-                for(String[] d : UATagData)
-                    UATagParams.add(new Parameter().setType(d[0]).setKey(d[1]).setValue(d[2]));
                 UATagParams.set(3, UATagParams.get(3).setValue(event));
-
-                List<Parameter> customEventFilterParams = new ArrayList<>();
-                customEventFilterParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{_event}}"));
-                customEventFilterParams.add(new Parameter().setType("templete").setKey("arg1").setValue(event));
+                customEventFilterParams.set(1, customEventFilterParams.get(1).setValue(event));
 
                 gtm.createTag(
-                    "GA " + name,
+                    "GA - " + name,
                     "ua",
                     Collections.singletonList(
                         gtm.createTrigger(
@@ -93,7 +95,48 @@ public class GTMService {
                 );
             }
 
+            // create DOM Ready Triggers & HTML Tag
+            List<String> domReadyData = fileReaders.readFile("cafe24_domReady");
 
+            List<Parameter> domReadyParams = new ArrayList<>();
+            domReadyParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{Page Path}}"));
+            domReadyParams.add(new Parameter().setType("template").setKey("arg1").setValue(""));
+
+            for (int i = 0; i < domReadyData.size(); i++) {
+                String name = domReadyData.get(i);
+
+                domReadyParams.set(1, domReadyParams.get(1).setValue(domReadyData.get(++i)));
+
+                gtm.createTag(
+                    "GA - " + name,
+                    "html",
+                    Collections.singletonList(
+                        gtm.createTrigger(
+                            name,
+                            "domReady",
+                            Collections.singletonList(new Condition().setType("includes").setParameter(domReadyParams)),
+                            Collections.singletonList(new Parameter().setType("boolean").setKey("dom").setValue("false")),
+                            null
+                        ).getTriggerId()
+                    ),
+                    Collections.singletonList(new Parameter().setType("template").setKey("html").setValue(domReadyData.get(++i))),
+                    null
+                );
+            }
+
+            // create All Page View Tag
+            UATagParams.set(0, UATagParams.get(0).setValue("TRACK_PAGEVIEW"));
+
+            gtm.createTag(
+                "All Page View",
+                "ua",
+                Collections.singletonList("2147479553"),
+                UATagParams,
+                null
+            );
+
+            // Container Version Publish
+            gtm.publish("1");
 
         } catch (IOException e) {
             System.out.println("[ERROR] : " + e.getLocalizedMessage());

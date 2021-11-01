@@ -18,6 +18,7 @@ public class FileReaders {
         while((line = reader.readLine()) != null)
             lines.add(line);
 
+        reader.close();
         return lines;
     }
 }

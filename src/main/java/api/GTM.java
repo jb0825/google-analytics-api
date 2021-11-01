@@ -123,10 +123,14 @@ public class GTM {
 
     /**
      * 참고 : https://developers.google.com/tag-manager/api/v2/reference/accounts/containers/workspaces/tags/create
-     * create UA Tag
+     * UA Tag
      * @param type : "ua"
-     * @param params : List<Parameter>
-
+     * @param params : List<Parameter> type : "template", key : "trackType", value : track type
+     *               ...
+     *
+     * HTML Tag
+     * @param type: "html"
+     * @param params : List<Parameter> type : "template", key : "html", value : html code
      * @return
      * @throws IOException
      */
@@ -157,7 +161,7 @@ public class GTM {
     }
 
     /**
-     * create Custom Event Trigger :
+     * Custom Event Trigger :
      * @param type : "customEvent"
      * @param filters :
      * List<Condition> type : "equals"
@@ -196,7 +200,7 @@ public class GTM {
     }
 
     /**
-     * create GA PROPERTY ID Variable :
+     * GA PROPERTY ID Variable :
      * @param name : "GA PROPERTY ID"
      * @param type : "gas"
      * @param params : Collections.singletonList(new Parameter().setType("template").setKey("trackingId").setValue(UAPropertyId))
