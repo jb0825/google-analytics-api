@@ -121,6 +121,15 @@ public class GTM {
         return tagManager.accounts().containers().workspaces().tags().get(getWorkspacePath() + "/tags/" + tagId).execute();
     }
 
+    /**
+     * 참고 : https://developers.google.com/tag-manager/api/v2/reference/accounts/containers/workspaces/tags/create
+     * create UA Tag
+     * @param type : "ua"
+     * @param params : List<Parameter>
+
+     * @return
+     * @throws IOException
+     */
     public Tag createTag(String name, String type, List<String> triggerId, List<Parameter> params, String folderId) throws IOException {
         Tag tag = new Tag();
         tag.setName(name);
@@ -147,6 +156,17 @@ public class GTM {
         return tagManager.accounts().containers().workspaces().triggers().get(getWorkspacePath() + "/triggers/" + triggerId).execute();
     }
 
+    /**
+     * create Custom Event Trigger :
+     * @param type : "customEvent"
+     * @param filters :
+     * List<Condition> type : "equals"
+     *                 parameter : List<Parameter> type : "template", key : "arg0", value : "{{_event}}"
+     *                                             type : "template", key : "arg1", value : event name
+     * @param params : null
+     * @return
+     * @throws IOException
+     */
     public Trigger createTrigger(String name, String type, List<Condition> filters, List<Parameter> params, String folderId) throws IOException {
         Trigger trigger = new Trigger();
         trigger.setName(name);
@@ -175,6 +195,16 @@ public class GTM {
         return tagManager.accounts().containers().workspaces().variables().get(getWorkspacePath() + "/variables/" + variableId).execute();
     }
 
+    /**
+     * create GA PROPERTY ID Variable :
+     * @param name : "GA PROPERTY ID"
+     * @param type : "gas"
+     * @param params : Collections.singletonList(new Parameter().setType("template").setKey("trackingId").setValue(UAPropertyId))
+     * @param folderId
+     *
+     * @return
+     * @throws IOException
+     */
     public Variable createVariable(String name, String type, List<Parameter> params, String folderId) throws IOException {
         Variable variable = new Variable();
         variable.setName(name);
