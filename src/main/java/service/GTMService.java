@@ -24,7 +24,7 @@ public class GTMService {
         fileReaders = new FileReaders();
     }
 
-    public Boolean setCafe24EcommerceGTM(String accountId, String UAPropertyId, String containerName, Map<String, String> variables) {
+    public Boolean setCafe24EcommerceGTM(String accountId, String UAPropertyId, String containerName) {
         gtm.setAccountId(accountId);
 
         try {
@@ -52,6 +52,7 @@ public class GTMService {
             }
 
             // create Custom Event Triggers & UA Tags
+            // 애널리틱스 이벤트 태그
             List<String> customEventData = fileReaders.readFile("cafe24_customEvent");
 
             String[][] UATagData = {
@@ -96,7 +97,8 @@ public class GTMService {
             }
 
             // create DOM Ready Triggers & HTML Tag
-            List<String> domReadyData = fileReaders.readFile("cafe24_domReady");
+            // 이벤트 전송 HTML 태그
+            List<String> domReadyData = fileReaders.readFile("cafe24_ecommerceDomReady");
 
             List<Parameter> domReadyParams = new ArrayList<>();
             domReadyParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{Page Path}}"));
@@ -112,7 +114,7 @@ public class GTMService {
                     "html",
                     Collections.singletonList(
                         gtm.createTrigger(
-                            name,
+                            "DOM Ready - " + name,
                             "domReady",
                             Collections.singletonList(new Condition().setType("includes").setParameter(domReadyParams)),
                             Collections.singletonList(new Parameter().setType("boolean").setKey("dom").setValue("false")),
@@ -123,6 +125,44 @@ public class GTMService {
                     null
                 );
             }
+
+            // create DOM Ready Triggers & UA Tags
+            // 회원가입 이벤트 태그
+            List<String> joinDomReadyData = fileReaders.readFile("cafe24_memberDomReady");
+            String[][] JoinTagData = {
+                    {"template", "trackType", "TRACK_EVENT"},
+                    {"template", "trackingId", UAPropertyId},
+                    {"template", "eventCategory", "member"},
+                    {"template", "eventAction", null},
+                    {"template", "gaSettings", "{{GA PROPERTY ID}}"},
+            };
+            List<Parameter> JoinTagParams = new ArrayList<>();
+            for(String[] d : JoinTagData)
+                JoinTagParams.add(new Parameter().setType(d[0]).setKey(d[1]).setValue(d[2]));
+
+            for (int i = 0; i < joinDomReadyData.size(); i++) {
+                String name = joinDomReadyData.get(i);
+
+                JoinTagParams.set(3, JoinTagParams.get(3).setValue(joinDomReadyData.get(++i)));
+                domReadyParams.set(1, domReadyParams.get(1).setValue(joinDomReadyData.get(++i)));
+
+                gtm.createTag(
+                    "GA - 이벤트 - " + name,
+                    "ua",
+                    Collections.singletonList(
+                        gtm.createTrigger(
+                            "DOM Ready - " + name,
+                            "domReady",
+                            Collections.singletonList(new Condition().setType("includes").setParameter(domReadyParams)),
+                            Collections.singletonList(new Parameter().setType("boolean").setKey("dom").setValue("false")),
+                            null
+                        ).getTriggerId()
+                    ),
+                    JoinTagParams,
+                    null
+                );
+            }
+
 
             // create All Page View Tag
             UATagParams.set(0, UATagParams.get(0).setValue("TRACK_PAGEVIEW"));

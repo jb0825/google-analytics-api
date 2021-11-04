@@ -1,0 +1,6 @@
+회원가입
+sign up
+/member/join.html
+회원가입 완료
+sign up complete
+/member/join_result.html
