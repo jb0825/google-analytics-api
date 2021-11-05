@@ -102,7 +102,6 @@ public class GTMService {
                     null
                 );
             }
-            TimeUnit.MINUTES.sleep(1);
             // create DOM Ready Triggers & HTML Tag
             // 이벤트 전송 HTML 태그
             List<String> domReadyData = fileReaders.readFile("cafe24_ecommerceDomReady");
@@ -133,7 +132,6 @@ public class GTMService {
                 );
             }
 
-            TimeUnit.MINUTES.sleep(1);
             // create DOM Ready Triggers & UA Tags
             // 회원가입 이벤트 태그
             List<String> joinDomReadyData = fileReaders.readFile("cafe24_memberDomReady");
