@@ -1,6 +1,8 @@
 import api.GTM;
 import com.google.api.services.tagmanager.model.Condition;
+import com.google.api.services.tagmanager.model.ContainerVersion;
 import com.google.api.services.tagmanager.model.Parameter;
+import service.GTMService;
 import util.FileReaders;
 
 import java.io.FileReader;
@@ -12,27 +14,24 @@ import java.util.List;
 
 public class main {
 
-    public static void main(String ...args) throws GeneralSecurityException, IOException {
+    public static void main(String ...args) throws GeneralSecurityException, IOException, InterruptedException {
         GTM gtm = new GTM();
         gtm.initialize();
 
         gtm.setAccountId("6004589006");
-        gtm.setContainerId("53606788"); // 1_1268
+        gtm.setContainerId("54144322"); // api test
 
-        List<Parameter> filterParams = new ArrayList<>();
-        filterParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{_event}}"));
-        filterParams.add(new Parameter().setType("template").setKey("arg1").setValue("이벤트명"));
-        List<Condition> filters = new ArrayList<>();
-        filters.add(new Condition().setType("equals").setParameter(filterParams));
+        //System.out.println(gtm.getContainers());
+        /*
+        GTMService gtmService = new GTMService();
+        gtmService.setCafe24EcommerceGTM("6004589006", "UA-211754766-1", "apitest");
+        */
 
-        gtm.createTrigger(
-                "custom event trigger test",
-                "customEvent",
-                filters,
-                null,
-                null
-                );
+        gtm.getWorkspaces().forEach(System.out::println);
+        gtm.setWorkspaceId("5");
+        ContainerVersion containerVersion = gtm.createVersion();
 
+        //gtm.publish(containerVersion.getContainerVersionId());
     }
 
 }

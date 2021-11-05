@@ -1,9 +1,11 @@
 package service;
 
 import api.GTM;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.tagmanager.model.Condition;
 import com.google.api.services.tagmanager.model.Container;
 import com.google.api.services.tagmanager.model.Parameter;
+import com.google.api.services.tagmanager.model.Workspace;
 import util.FileReaders;
 
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class GTMService {
     public static GTM gtm;
@@ -24,12 +27,16 @@ public class GTMService {
         fileReaders = new FileReaders();
     }
 
-    public Boolean setCafe24EcommerceGTM(String accountId, String UAPropertyId, String containerName) {
+    public Boolean setCafe24EcommerceGTM(String accountId, String UAPropertyId, String containerName) throws InterruptedException {
         gtm.setAccountId(accountId);
 
         try {
             // create GTM Container
             Container container = gtm.createContainer(containerName);
+            gtm.setContainerId(container.getContainerId());
+
+            // set Workspace Id
+            gtm.setWorkspaceId(gtm.getWorkspaces().get(0).getWorkspaceId());
 
             // create GA PROPERTY ID Variable
             gtm.createVariable(
@@ -70,7 +77,7 @@ public class GTMService {
 
             List<Parameter> customEventFilterParams = new ArrayList<>();
             customEventFilterParams.add(new Parameter().setType("template").setKey("arg0").setValue("{{_event}}"));
-            customEventFilterParams.add(new Parameter().setType("templete").setKey("arg1").setValue(""));
+            customEventFilterParams.add(new Parameter().setType("template").setKey("arg1").setValue(""));
 
             for (int i = 0; i < customEventData.size(); i++) {
                 String name = customEventData.get(i);
@@ -95,7 +102,7 @@ public class GTMService {
                     null
                 );
             }
-
+            TimeUnit.MINUTES.sleep(1);
             // create DOM Ready Triggers & HTML Tag
             // 이벤트 전송 HTML 태그
             List<String> domReadyData = fileReaders.readFile("cafe24_ecommerceDomReady");
@@ -116,7 +123,7 @@ public class GTMService {
                         gtm.createTrigger(
                             "DOM Ready - " + name,
                             "domReady",
-                            Collections.singletonList(new Condition().setType("includes").setParameter(domReadyParams)),
+                            Collections.singletonList(new Condition().setType("contains").setParameter(domReadyParams)),
                             Collections.singletonList(new Parameter().setType("boolean").setKey("dom").setValue("false")),
                             null
                         ).getTriggerId()
@@ -126,6 +133,7 @@ public class GTMService {
                 );
             }
 
+            TimeUnit.MINUTES.sleep(1);
             // create DOM Ready Triggers & UA Tags
             // 회원가입 이벤트 태그
             List<String> joinDomReadyData = fileReaders.readFile("cafe24_memberDomReady");
@@ -153,7 +161,7 @@ public class GTMService {
                         gtm.createTrigger(
                             "DOM Ready - " + name,
                             "domReady",
-                            Collections.singletonList(new Condition().setType("includes").setParameter(domReadyParams)),
+                            Collections.singletonList(new Condition().setType("contains").setParameter(domReadyParams)),
                             Collections.singletonList(new Parameter().setType("boolean").setKey("dom").setValue("false")),
                             null
                         ).getTriggerId()
@@ -180,6 +188,7 @@ public class GTMService {
 
         } catch (IOException e) {
             System.out.println("[ERROR] : " + e.getLocalizedMessage());
+            e.printStackTrace();
             return false;
         }
 

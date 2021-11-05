@@ -26,6 +26,7 @@ public class GTM {
     private TagManager tagManager;
     private String accountId;
     private String containerId;
+    private String workspaceId;
 
     public void initialize() throws GeneralSecurityException, IOException {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -38,7 +39,7 @@ public class GTM {
 
     private String getAccountPath() { return "accounts/" + accountId; }
     private String getContainerPath() { return "accounts/" + accountId + "/containers/" + containerId; }
-    private String getWorkspacePath() { return "accounts/" + accountId + "/containers/" + containerId + "/workspaces/2"; }
+    private String getWorkspacePath() { return "accounts/" + accountId + "/containers/" + containerId + "/workspaces/" + workspaceId; }
 
     /**
      * Account
@@ -221,6 +222,18 @@ public class GTM {
 
     public void deleteVariable(String variableId) throws IOException {
         tagManager.accounts().containers().workspaces().variables().delete(getWorkspacePath() + "/variables/" + variableId);
+    }
+
+    /**
+     * Workspace
+     */
+    public List<Workspace> getWorkspaces() throws IOException {
+        return tagManager.accounts().containers().workspaces().list(getContainerPath()).execute().getWorkspace();
+    }
+
+    public ContainerVersion createVersion() throws IOException {
+        CreateContainerVersionRequestVersionOptions options = new CreateContainerVersionRequestVersionOptions();
+        return tagManager.accounts().containers().workspaces().createVersion(getWorkspacePath(), null).execute().getContainerVersion();
     }
 
     /**
