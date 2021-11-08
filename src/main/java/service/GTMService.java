@@ -169,7 +169,6 @@ public class GTMService {
                 );
             }
 
-
             // create All Page View Tag
             UATagParams.set(0, UATagParams.get(0).setValue("TRACK_PAGEVIEW"));
 
@@ -180,9 +179,6 @@ public class GTMService {
                 UATagParams,
                 null
             );
-
-            // Container Version Publish
-            gtm.publish("1");
 
         } catch (IOException e) {
             System.out.println("[ERROR] : " + e.getLocalizedMessage());

@@ -25,11 +25,12 @@ public class main {
         /*
         GTMService gtmService = new GTMService();
         gtmService.setCafe24EcommerceGTM("6004589006", "UA-211754766-1", "apitest");
-        */
 
         gtm.getWorkspaces().forEach(System.out::println);
         gtm.setWorkspaceId("5");
         ContainerVersion containerVersion = gtm.createVersion();
+
+         */
 
         //gtm.publish(containerVersion.getContainerVersionId());
     }
