@@ -8,6 +8,7 @@ import com.google.api.services.tagmanager.model.Parameter;
 import com.google.api.services.tagmanager.model.Workspace;
 import util.FileReaders;
 
+import java.awt.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ public class GTMService {
                     null
                 );
             }
+
             // create DOM Ready Triggers & HTML Tag
             // 이벤트 전송 HTML 태그
             List<String> domReadyData = fileReaders.readFile("cafe24_ecommerceDomReady");
@@ -170,6 +172,7 @@ public class GTMService {
             }
 
             // create All Page View Tag
+            // 2147479553 : All Pages Trigger ID
             UATagParams.set(0, UATagParams.get(0).setValue("TRACK_PAGEVIEW"));
 
             gtm.createTag(

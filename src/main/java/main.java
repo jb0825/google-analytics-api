@@ -18,13 +18,19 @@ public class main {
         GTM gtm = new GTM();
         gtm.initialize();
 
-        gtm.setAccountId("6004589006");
-        gtm.setContainerId("54144322"); // api test
+        gtm.setAccountId("6001659788");
+        System.out.println(gtm.getContainers());
+
+
+        //gtm.setContainerId("54144322"); // api test
 
         //System.out.println(gtm.getContainers());
-        /*
+
+
         GTMService gtmService = new GTMService();
-        gtmService.setCafe24EcommerceGTM("6004589006", "UA-211754766-1", "apitest");
+        gtmService.setCafe24EcommerceGTM("6001659788", "UA-154449260-1", "페가시");
+
+        /*
 
         gtm.getWorkspaces().forEach(System.out::println);
         gtm.setWorkspaceId("5");
