@@ -3,27 +3,75 @@ package api;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
-import com.google.api.services.tagmanager.TagManagerScopes;
+import com.google.api.services.analyticsreporting.v4.model.*;
+import lombok.Setter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
 
+@Setter
 public class Reporting {
     private static String KEY_FILE_LOCATION = "key/key_file.json";
+    private static HttpTransport httpTransport;
+    private static GoogleCredential credential;
 
     private AnalyticsReporting reporting;
     private Analytics analytics;
+    private String viewId;
 
-    public void reportingInit() throws GeneralSecurityException, IOException {
-        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        GoogleCredential credential = GoogleCredential
+    public Reporting() throws GeneralSecurityException, IOException {
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        credential = GoogleCredential
                 .fromStream(new FileInputStream(KEY_FILE_LOCATION))
                 .createScoped(AnalyticsScopes.all());
-
     }
+
+    public Reporting(String viewId) throws GeneralSecurityException, IOException {
+        this.viewId = viewId;
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        credential = GoogleCredential
+                .fromStream(new FileInputStream(KEY_FILE_LOCATION))
+                .createScoped(AnalyticsScopes.all());
+    }
+
+    public void reportingInit() throws GeneralSecurityException, IOException {
+        this.reporting = new AnalyticsReporting(httpTransport, GsonFactory.getDefaultInstance(), credential);
+    }
+
+    public void mcfInit() throws GeneralSecurityException, IOException {
+        this.analytics = new Analytics(httpTransport, GsonFactory.getDefaultInstance(), credential);
+    }
+
+    /**
+     * 소스/매체 보고서 조회
+     * @param startDate 시작일 (ex. 1DaysAgo)
+     * @param endDate 종료일 (ex. today)
+     * @return Report
+     * @throws IOException
+     */
+    public List<Report> getSourceMediumRevenueReport(String startDate, String endDate) throws IOException {
+        DateRange dateRange = new DateRange().setStartDate(startDate).setEndDate(endDate);
+        Dimension dimension = new Dimension().setName("ga:sourceMedium");
+        Metric metric = new Metric().setExpression("ga:transactionRevenue").setFormattingType("INTEGER");
+
+        ReportRequest request = new ReportRequest()
+                .setViewId(viewId)
+                .setDateRanges(Collections.singletonList(dateRange))
+                .setDimensions(Collections.singletonList(dimension))
+                .setMetrics(Collections.singletonList(metric));
+
+        GetReportsRequest reportsRequest = new GetReportsRequest().setReportRequests(Collections.singletonList(request));
+
+        return reporting.reports().batchGet(reportsRequest).execute().getReports();
+    }
+
+
 
 }
