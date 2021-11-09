@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.analytics.Analytics;
 import com.google.api.services.analytics.AnalyticsScopes;
+import com.google.api.services.analytics.model.McfData;
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.*;
 import lombok.Setter;
@@ -72,6 +73,23 @@ public class Reporting {
         return reporting.reports().batchGet(reportsRequest).execute().getReports();
     }
 
+    /*
+     * Multi Channel Funnel
+     *      MCF Dimensions & Metrics Reference :
+     *      https://developers.google.com/analytics/devguides/reporting/mcf/dimsmets
+     */
 
+    /**
+     * MCF 소스/매체 보고서 지원 전환 가치 조회
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws IOException
+     */
+    public McfData getMcfSourceMediumData(String startDate, String endDate) throws IOException {
+        return analytics.data().mcf().get(
+            "ga:" + viewId, startDate, endDate, "mcf:assistedValue"
+        ).setDimensions("mcf:sourceMedium").execute();
+    }
 
 }
