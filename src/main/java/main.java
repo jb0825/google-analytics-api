@@ -1,3 +1,4 @@
+import api.Admin;
 import api.GTM;
 import com.google.api.services.tagmanager.model.Condition;
 import com.google.api.services.tagmanager.model.ContainerVersion;
@@ -26,9 +27,11 @@ public class main {
 
         //System.out.println(gtm.getContainers());
 
-
+        /*
         GTMService gtmService = new GTMService();
         gtmService.setCafe24EcommerceGTM("6001659788", "UA-154449260-1", "페가시");
+         */
+
 
         /*
 
@@ -39,6 +42,8 @@ public class main {
          */
 
         //gtm.publish(containerVersion.getContainerVersionId());
+
+
     }
 
 }
