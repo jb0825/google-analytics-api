@@ -8,12 +8,21 @@ import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 @NoArgsConstructor
 public class Admin {
 
     private static AnalyticsAdminServiceClient adminServiceClient;
+
+    public void terminate() throws InterruptedException {
+        if (adminServiceClient != null) {
+            adminServiceClient.shutdown();
+            adminServiceClient.awaitTermination(30, TimeUnit.SECONDS);
+            adminServiceClient.close();
+        }
+    }
 
     public String createAccountTicket(String token, String displayName, String redirectUri) throws IOException {
         Date date = new Date();

@@ -183,6 +183,9 @@ public class GTMService {
                 null
             );
 
+            // create Container Version
+            gtm.createVersion();
+
         } catch (IOException e) {
             System.out.println("[ERROR] : " + e.getLocalizedMessage());
             e.printStackTrace();
