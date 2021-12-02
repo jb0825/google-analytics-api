@@ -37,8 +37,11 @@ public class main {
 
 
         //gtm.publish(containerVersion.getContainerVersionId());
-
-
     }
 
+
+    /**
+     * 웹 애플리케이션 OAuth2.0 가이드
+     * https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#oauth-2.0-endpoints
+     */
 }
