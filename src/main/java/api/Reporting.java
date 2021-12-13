@@ -14,6 +14,7 @@ import lombok.Setter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,5 +92,8 @@ public class Reporting {
             "ga:" + viewId, startDate, endDate, "mcf:assistedValue"
         ).setDimensions("mcf:sourceMedium").execute();
     }
+
+
+
 
 }

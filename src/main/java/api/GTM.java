@@ -2,6 +2,8 @@ package api;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.tagmanager.TagManager;
@@ -34,7 +36,19 @@ public class GTM {
                 .fromStream(new FileInputStream(KEY_FILE_LOCATION))
                 .createScoped(TagManagerScopes.all());
 
-        tagManager = new TagManager(httpTransport, GsonFactory.getDefaultInstance(), credential);
+        tagManager = new TagManager(httpTransport, GsonFactory.getDefaultInstance(), setHttpTimeout(credential));
+    }
+
+    // Http Request Timeout 설정
+    private static HttpRequestInitializer setHttpTimeout(final HttpRequestInitializer requestInitializer) {
+        return new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) throws IOException {
+                requestInitializer.initialize(request);
+                request.setConnectTimeout(5 * 60000); // 5 minutes connect timeout
+                request.setReadTimeout(5 * 60000);    // 5 minutes read timeout
+            }
+        };
     }
 
     private String getAccountPath() { return "accounts/" + accountId; }
