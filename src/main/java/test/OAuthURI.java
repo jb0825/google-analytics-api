@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 public class OAuthURI {
     /**
      *   location.href =
-     *     "https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?" +
+     *     "https://accounts.google.com/o/oauth2/v2/auth/oa                                        uthchooseaccount?" +
      *     "client_id=" +
      *     oAuthId +
      *     "&redirect_uri=" +

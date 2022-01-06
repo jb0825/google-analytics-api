@@ -94,6 +94,71 @@ public class Reporting {
     }
 
 
+    // 여러가지 조건 쿼리
+    /**
+     * 광고 콘텐츠가 'abc' 인 광고의 직접기여 조회
+     * 각 ReportRow 예시 :
+     * {"dimensions":["abc"],"metrics":[{"values":["직접기여"]}]}
+     * @return List<ReportRow> directList
+     */
+    public List<ReportRow> getDirectList() {
+        if (reporting == null) {
+            System.out.println("service error");
+            return null;
+        }
 
+        DateRange dateRange = new DateRange().setStartDate("1DaysAgo").setEndDate("today");
+        List<Dimension> dimensions = new ArrayList<>();
+        List<DimensionFilter> filters = new ArrayList<>();
+
+        dimensions.add(new Dimension().setName("ga:adContent"));
+        filters.add(new DimensionFilter().setDimensionName("ga:adContent").setOperator("EXACT").setExpressions(Collections.singletonList("abc")));
+
+        DimensionFilterClause dimensionFilter = new DimensionFilterClause().setFilters(filters);
+        Metric metric = new Metric().setExpression("ga:transactionRevenue").setFormattingType("INTEGER");
+
+        ReportRequest request = new ReportRequest()
+                .setViewId(viewId)
+                .setDateRanges(Collections.singletonList(dateRange))
+                .setDimensions(dimensions)
+                .setDimensionFilterClauses(Collections.singletonList(dimensionFilter))
+                .setMetrics(Collections.singletonList(metric));
+
+        try {
+            return reporting
+                    .reports()
+                    .batchGet(new GetReportsRequest().setReportRequests(Collections.singletonList(request)))
+                    .execute().getReports().get(0).getData().getRows();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 광고 콘텐츠가 'abc' 인 광고의 간접기여 조회
+     * 각 List<Rows> 예시 :
+     * [{"primitiveValue":"campaign-id"}, {"primitiveValue":"campaign-content"}, {"primitiveValue":"assistedValue"}]
+     * @return
+     */
+    public List<List<McfData.Rows>> getIndirectList() {
+        if (analytics == null) {
+            System.out.println("service error");
+            return null;
+        }
+
+        // filter =@ : substring
+        // == : equals
+        try {
+            McfData response = analytics.data().mcf()
+                    .get("ga:" + viewId, "2021-12-20", "today", "mcf:assistedValue")
+                    .setDimensions("mcf:adwordsCampaignID,mcf:adwordsAdContent") // Dimension 여러개 사용할땐 , 쉼표로
+                    .setFilters("mcf:adwordsAdContent=@abc")
+                    .execute();
+            return response.getRows();
+        } catch (NullPointerException | IOException e) {
+            return null;
+        }
+    }
 
 }
